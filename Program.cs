@@ -20,29 +20,29 @@ namespace TransactionNftScanner
                 var transactionDir = Directory.CreateDirectory($"Transactions\\{transactionHash}");
 
                 var transactionApiPath = $"txs/{transactionHash}/utxos";
-                var transactionUTXOs = await GetData<TransactionUTXOs>(transactionApiPath);
+                var transactionUTXOs = await GetData<TransactionUTXOs>(transactionApiPath).ConfigureAwait(false);
                 if (transactionUTXOs == null) { continue; }
 
-                await IterateDataAndDownloadImages(transactionUTXOs, transactionDir.FullName);
+                await IterateDataAndDownloadImages(transactionUTXOs, transactionDir.FullName).ConfigureAwait(false);
             }
         }
 
         private static async Task IterateDataAndDownloadImages(TransactionUTXOs transactionUTXOs, string dirPath)
         {
-            List<TransactionUTXOs.InputOutput> IOs = [.. transactionUTXOs.inputs, .. transactionUTXOs.outputs];
+            List<TransactionUTXOs.InputOutput> IOs = new(transactionUTXOs.inputs.Concat(transactionUTXOs.outputs));
 
             foreach (var IO in IOs)
             {
                 foreach (var asset in IO.amount.Where(x => x.unit != "lovelace" && x.quantity == "1"))
                 {
                     var assetApiPath = $"assets/{asset.unit}";
-                    var specificAsset = await GetData<SpecificAsset>(assetApiPath);
+                    var specificAsset = await GetData<SpecificAsset>(assetApiPath).ConfigureAwait(false);
                     if (specificAsset == null) { continue; }
                     var ipfsHash = specificAsset.onchain_metadata.image.Remove(0, 7);
                     var name = specificAsset.onchain_metadata.name;
                     var path = $"{dirPath}\\{name}.png";
 
-                    await DownloadImage(ipfsHash, path);
+                    await DownloadImage(ipfsHash, path).ConfigureAwait(false);
                 }
             }
         }
@@ -67,38 +67,35 @@ namespace TransactionNftScanner
             return input;
         }
 
-        private static async Task<T> GetData<T>(string path)
+        private static async Task<T?> GetData<T>(string path)
         {
-            var data = default(T);
-            HttpResponseMessage response = await client.GetAsync(path);
-
-            if (response.IsSuccessStatusCode)
+            try
             {
-                data = await response.Content.ReadFromJsonAsync<T>();
+                var response = await client.GetAsync(path).ConfigureAwait(false);
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadFromJsonAsync<T>().ConfigureAwait(false);
             }
-            if (data == null)
+            catch (Exception ex)
             {
-                Console.WriteLine("Failed to get data from: " + path);
+                Console.WriteLine($"Failed to get data from: {path}. Error: {ex.Message}");
+                return default;
             }
-            return data;
         }
 
-        private async static Task DownloadImage(string ipfsHash, string path)
+        private static async Task DownloadImage(string ipfsHash, string path)
         {
-            var url = new Uri(IPFS_BASE_URL + ipfsHash);
-            var response = await client.GetAsync(url);
-            byte[]? imageBytes = null;
-
-            if (response.IsSuccessStatusCode)
+            try
             {
-                imageBytes = await response.Content.ReadAsByteArrayAsync();
+                var url = new Uri(IPFS_BASE_URL + ipfsHash);
+                var response = await client.GetAsync(url).ConfigureAwait(false);
+                response.EnsureSuccessStatusCode();
+                var imageBytes = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
+                await File.WriteAllBytesAsync(path, imageBytes).ConfigureAwait(false);
             }
-            if (imageBytes == null)
+            catch (Exception ex)
             {
-                Console.WriteLine("Image download failed!");
-                return;
+                Console.WriteLine($"Image download failed! Error: {ex.Message}");
             }
-            await File.WriteAllBytesAsync(path, imageBytes);
         }
     }
 
