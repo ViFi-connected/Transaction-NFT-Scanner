@@ -2,13 +2,15 @@ using TransactionNftScanner.Models;
 
 namespace TransactionNftScanner
 {
-    public static class TransactionProcessor
+    public class TransactionProcessor(IHttpClientHelper httpClientHelper)
     {
-        public static async Task IterateDataAndDownloadImages(TransactionUTXOs transactionUTXOs, string dirPath)
+        private readonly IHttpClientHelper _httpClientHelper = httpClientHelper;
+
+        public async Task IterateDataAndDownloadImages(TransactionUTXOs transactionUTXOs, string dirPath)
         {
             List<TransactionUTXOs.InputOutput> IOs = new(transactionUTXOs.inputs.Concat(transactionUTXOs.outputs));
-            HashSet<string> processedAssets = new();
-            List<Task> downloadTasks = new();
+            HashSet<string> processedAssets = [];
+            List<Task> downloadTasks = [];
 
             foreach (var IO in IOs)
             {
@@ -20,7 +22,7 @@ namespace TransactionNftScanner
                     }
 
                     var assetApiPath = $"assets/{asset.unit}";
-                    var specificAssetTask = HttpClientHelper.GetData<SpecificAsset>(assetApiPath);
+                    var specificAssetTask = _httpClientHelper.GetData<SpecificAsset>(HttpClientName.Blackfrost, assetApiPath);
                     processedAssets.Add(asset.unit);
 
                     downloadTasks.Add(ProcessAsset(specificAssetTask, dirPath));
@@ -30,7 +32,7 @@ namespace TransactionNftScanner
             await Task.WhenAll(downloadTasks).ConfigureAwait(false);
         }
 
-        private static async Task ProcessAsset(Task<SpecificAsset?> specificAssetTask, string dirPath)
+        private async Task ProcessAsset(Task<SpecificAsset?> specificAssetTask, string dirPath)
         {
             var specificAsset = await specificAssetTask.ConfigureAwait(false);
             if (specificAsset == null) { return; }
@@ -39,7 +41,7 @@ namespace TransactionNftScanner
             var name = specificAsset.onchain_metadata.name;
             var path = $"{dirPath}\\{name}.png";
 
-            await HttpClientHelper.DownloadImage(ipfsHash, path).ConfigureAwait(false);
+            await _httpClientHelper.DownloadImage(ipfsHash, path).ConfigureAwait(false);
             Console.WriteLine($"Successfully downloaded image for asset: {name} to path: {path}\n");
         }
     }

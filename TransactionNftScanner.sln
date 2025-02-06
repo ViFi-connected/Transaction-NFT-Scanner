@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransactionNftScanner", "TransactionNftScanner.csproj", "{43108E6E-3BC6-4429-9885-330311FF651B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransactionNftScanner.Tests", "TransactionNftScanner.Tests\TransactionNftScanner.Tests.csproj", "{7A276781-5C5F-47A0-BAF6-CADF4312B11A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransactionNftScanner", "TransactionNftScanner\TransactionNftScanner.csproj", "{6F2A2EE1-0380-480C-B1E6-C0F517BF24C0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{43108E6E-3BC6-4429-9885-330311FF651B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{43108E6E-3BC6-4429-9885-330311FF651B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{43108E6E-3BC6-4429-9885-330311FF651B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{43108E6E-3BC6-4429-9885-330311FF651B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A276781-5C5F-47A0-BAF6-CADF4312B11A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A276781-5C5F-47A0-BAF6-CADF4312B11A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A276781-5C5F-47A0-BAF6-CADF4312B11A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A276781-5C5F-47A0-BAF6-CADF4312B11A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F2A2EE1-0380-480C-B1E6-C0F517BF24C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F2A2EE1-0380-480C-B1E6-C0F517BF24C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F2A2EE1-0380-480C-B1E6-C0F517BF24C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F2A2EE1-0380-480C-B1E6-C0F517BF24C0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

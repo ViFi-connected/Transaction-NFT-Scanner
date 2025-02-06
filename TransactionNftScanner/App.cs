@@ -1,13 +1,14 @@
-﻿using TransactionNftScanner.Models;
+using TransactionNftScanner.Models;
 
 namespace TransactionNftScanner
 {
-    public class Program
+    public class App(IHttpClientHelper httpClientHelper, TransactionProcessor transactionProcessor)
     {
-        private static async Task Main()
-        {
-            HttpClientHelper.SetClientDefaults();
+        private readonly IHttpClientHelper _httpClientHelper = httpClientHelper;
+        private readonly TransactionProcessor _transactionProcessor = transactionProcessor;
 
+        public async Task Run()
+        {
             while (true)
             {
                 var transactionHash = GetUserInput();
@@ -18,10 +19,10 @@ namespace TransactionNftScanner
                 }
 
                 var transactionApiPath = $"txs/{transactionHash}/utxos";
-                var transactionUTXOs = await HttpClientHelper.GetData<TransactionUTXOs>(transactionApiPath).ConfigureAwait(false);
+                var transactionUTXOs = await _httpClientHelper.GetData<TransactionUTXOs>(HttpClientName.Blackfrost, transactionApiPath).ConfigureAwait(false);
                 if (transactionUTXOs == null) { continue; }
 
-                await TransactionProcessor.IterateDataAndDownloadImages(transactionUTXOs, transactionDirPath).ConfigureAwait(false);
+                await _transactionProcessor.IterateDataAndDownloadImages(transactionUTXOs, transactionDirPath).ConfigureAwait(false);
             }
         }
 
