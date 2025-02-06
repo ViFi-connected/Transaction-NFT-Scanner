@@ -11,13 +11,17 @@ namespace TransactionNftScanner
             while (true)
             {
                 var transactionHash = GetUserInput();
-                var transactionDir = Directory.CreateDirectory($"Transactions\\{transactionHash}");
+                var transactionDirPath = $"Transactions\\{transactionHash}";
+                if (!Directory.Exists(transactionDirPath))
+                {
+                    Directory.CreateDirectory(transactionDirPath);
+                }
 
                 var transactionApiPath = $"txs/{transactionHash}/utxos";
                 var transactionUTXOs = await HttpClientHelper.GetData<TransactionUTXOs>(transactionApiPath).ConfigureAwait(false);
                 if (transactionUTXOs == null) { continue; }
 
-                await TransactionProcessor.IterateDataAndDownloadImages(transactionUTXOs, transactionDir.FullName).ConfigureAwait(false);
+                await TransactionProcessor.IterateDataAndDownloadImages(transactionUTXOs, transactionDirPath).ConfigureAwait(false);
             }
         }
 
