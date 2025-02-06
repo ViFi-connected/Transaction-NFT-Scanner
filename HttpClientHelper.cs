@@ -7,7 +7,7 @@ namespace TransactionNftScanner
     {
         static readonly HttpClient client = new();
         const string API_BASE_URL = "https://cardano-mainnet.blockfrost.io/api/v0/";
-        const string IPFS_BASE_URL = "https://cloudflare-ipfs.com/ipfs/";
+        const string IPFS_BASE_URL = "https://ipfs.io/ipfs/";
 
         public static void SetClientDefaults()
         {
