@@ -27,14 +27,16 @@ namespace TransactionNftScanner
                 .ConfigureServices((context, services) =>
                 {
                     var httpClientSettings = context.Configuration.GetSection("HttpClientSettings").Get<HttpClientSettings>();
+                    var projectId = Environment.GetEnvironmentVariable("PROJECT_ID")
+                        ?? throw new InvalidOperationException("Environment variable 'PROJECT_ID' not found.");
 
-                    if (httpClientSettings?.Blackfrost != null)
+                    if (httpClientSettings?.Blackfrost != null && !string.IsNullOrEmpty(projectId))
                     {
                         services.AddHttpClient(HttpClientName.Blackfrost.ToString(), client =>
                         {
                             client.BaseAddress = new Uri(httpClientSettings.Blackfrost.BaseAddress);
                             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                            client.DefaultRequestHeaders.Add("project_id", httpClientSettings.Blackfrost.ProjectId);
+                            client.DefaultRequestHeaders.Add("project_id", projectId);
                             client.Timeout = TimeSpan.FromSeconds(httpClientSettings.Blackfrost.Timeout);
                         });
                     }
