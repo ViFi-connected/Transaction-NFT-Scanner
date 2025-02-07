@@ -1,4 +1,6 @@
-﻿namespace TransactionNftScanner
+﻿using TransactionNftScanner.Models;
+
+namespace TransactionNftScanner.Shared
 {
     public interface IHttpClientHelper
     {

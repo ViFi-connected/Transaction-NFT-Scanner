@@ -1,6 +1,11 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Net.Http.Headers;
+using TransactionNftScanner.Logic;
+using TransactionNftScanner.Models;
+using TransactionNftScanner.Services;
+using TransactionNftScanner.Shared;
 
 namespace TransactionNftScanner
 {
@@ -15,22 +20,34 @@ namespace TransactionNftScanner
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureServices((_, services) =>
+                .ConfigureAppConfiguration((hostingContext, config) =>
                 {
-                    services.AddHttpClient(HttpClientName.Blackfrost.ToString(), client =>
-                    {
-                        client.BaseAddress = new Uri("https://cardano-mainnet.blockfrost.io/api/v0/");
-                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                        client.DefaultRequestHeaders.Add("project_id", "mainnetRUrPjKhpsagz4aKOCbvfTPHsF0SmwhLc");
-                        client.Timeout = TimeSpan.FromSeconds(30);
-                    });
+                    config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+                })
+                .ConfigureServices((context, services) =>
+                {
+                    var httpClientSettings = context.Configuration.GetSection("HttpClientSettings").Get<HttpClientSettings>();
 
-                    services.AddHttpClient(HttpClientName.Ipfs.ToString(), client =>
+                    if (httpClientSettings?.Blackfrost != null)
                     {
-                        client.BaseAddress = new Uri("https://ipfs.io/");
-                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                        client.Timeout = TimeSpan.FromSeconds(30);
-                    });
+                        services.AddHttpClient(HttpClientName.Blackfrost.ToString(), client =>
+                        {
+                            client.BaseAddress = new Uri(httpClientSettings.Blackfrost.BaseAddress);
+                            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                            client.DefaultRequestHeaders.Add("project_id", httpClientSettings.Blackfrost.ProjectId);
+                            client.Timeout = TimeSpan.FromSeconds(httpClientSettings.Blackfrost.Timeout);
+                        });
+                    }
+
+                    if (httpClientSettings?.Ipfs != null)
+                    {
+                        services.AddHttpClient(HttpClientName.Ipfs.ToString(), client =>
+                        {
+                            client.BaseAddress = new Uri(httpClientSettings.Ipfs.BaseAddress);
+                            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                            client.Timeout = TimeSpan.FromSeconds(httpClientSettings.Ipfs.Timeout);
+                        });
+                    }
 
                     services.AddTransient<IHttpClientHelper, HttpClientHelper>();
                     services.AddTransient<TransactionProcessor>();

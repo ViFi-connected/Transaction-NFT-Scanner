@@ -1,6 +1,7 @@
 using TransactionNftScanner.Models;
+using TransactionNftScanner.Shared;
 
-namespace TransactionNftScanner
+namespace TransactionNftScanner.Logic
 {
     public class TransactionProcessor(IHttpClientHelper httpClientHelper)
     {

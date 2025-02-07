@@ -1,6 +1,8 @@
 using System.Net.Http.Json;
+using TransactionNftScanner.Models;
+using TransactionNftScanner.Shared;
 
-namespace TransactionNftScanner
+namespace TransactionNftScanner.Services
 {
     public class HttpClientHelper(IHttpClientFactory httpClientFactory) : IHttpClientHelper
     {

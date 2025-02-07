@@ -1,4 +1,4 @@
-namespace TransactionNftScanner
+namespace TransactionNftScanner.Models
 {
     public enum HttpClientName
     {

@@ -1,4 +1,6 @@
+using TransactionNftScanner.Logic;
 using TransactionNftScanner.Models;
+using TransactionNftScanner.Shared;
 
 namespace TransactionNftScanner
 {
