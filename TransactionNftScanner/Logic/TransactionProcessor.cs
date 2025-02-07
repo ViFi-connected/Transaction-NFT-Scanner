@@ -9,22 +9,22 @@ namespace TransactionNftScanner.Logic
 
         public async Task IterateDataAndDownloadImages(TransactionUTXOs transactionUTXOs, string dirPath)
         {
-            List<TransactionUTXOs.InputOutput> IOs = new(transactionUTXOs.inputs.Concat(transactionUTXOs.outputs));
+            List<TransactionUTXOs.InputOutput> IOs = new(transactionUTXOs.Inputs.Concat(transactionUTXOs.Outputs));
             HashSet<string> processedAssets = [];
             List<Task> downloadTasks = [];
 
             foreach (var IO in IOs)
             {
-                foreach (var asset in IO.amount.Where(x => x.unit != "lovelace" && x.quantity == "1"))
+                foreach (var asset in IO.Amount.Where(x => x.Unit != "lovelace" && x.Quantity == "1"))
                 {
-                    if (processedAssets.Contains(asset.unit))
+                    if (processedAssets.Contains(asset.Unit))
                     {
                         continue;
                     }
 
-                    var assetApiPath = $"assets/{asset.unit}";
+                    var assetApiPath = $"assets/{asset.Unit}";
                     var specificAssetTask = _httpClientHelper.GetData<SpecificAsset>(HttpClientName.Blackfrost, assetApiPath);
-                    processedAssets.Add(asset.unit);
+                    processedAssets.Add(asset.Unit);
 
                     downloadTasks.Add(ProcessAsset(specificAssetTask, dirPath));
                 }
@@ -38,8 +38,8 @@ namespace TransactionNftScanner.Logic
             var specificAsset = await specificAssetTask.ConfigureAwait(false);
             if (specificAsset == null) { return; }
 
-            var ipfsHash = specificAsset.onchain_metadata.image.Remove(0, 7);
-            var name = specificAsset.onchain_metadata.name;
+            var ipfsHash = specificAsset.OnchainMetadata.Image.Remove(0, 7);
+            var name = specificAsset.OnchainMetadata.Name;
             var path = $"{dirPath}\\{name}.png";
 
             await _httpClientHelper.DownloadImage(ipfsHash, path).ConfigureAwait(false);

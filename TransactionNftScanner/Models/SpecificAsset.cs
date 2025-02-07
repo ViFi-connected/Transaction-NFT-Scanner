@@ -1,13 +1,16 @@
+using System.Text.Json.Serialization;
+
 namespace TransactionNftScanner.Models
 {
     public class SpecificAsset
     {
-        public required OnchainMetadata onchain_metadata { get; set; }
+        [JsonPropertyName("onchain_metadata")]
+        public required Metadata OnchainMetadata { get; set; }
 
-        public class OnchainMetadata
+        public class Metadata
         {
-            public required string image { get; set; }
-            public required string name { get; set; }
+            public required string Image { get; set; }
+            public required string Name { get; set; }
         }
     }
 }

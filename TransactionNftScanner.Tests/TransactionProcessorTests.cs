@@ -17,25 +17,25 @@ namespace TransactionNftScanner.Tests
         {
             transactionUTXOs = new TransactionUTXOs
             {
-                hash = "testHash",
-                inputs =
+                Hash = "testHash",
+                Inputs =
                     [
                         new() {
-                            amount =
+                            Amount =
                             [
-                                new TransactionUTXOs.Amount { unit = "testUnit", quantity = "1" }
+                                new TransactionUTXOs.Amount { Unit = "testUnit", Quantity = "1" }
                             ]
                         }
                     ],
-                outputs = []
+                Outputs = []
             };
 
             specificAsset = new SpecificAsset
             {
-                onchain_metadata = new SpecificAsset.OnchainMetadata
+                OnchainMetadata = new SpecificAsset.Metadata
                 {
-                    image = "ipfs://testHash",
-                    name = "testName"
+                    Image = "ipfs://testHash",
+                    Name = "testName"
                 }
             };
 

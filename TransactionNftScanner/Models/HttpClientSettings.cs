@@ -2,5 +2,5 @@ namespace TransactionNftScanner.Models
 {
     public record HttpClientSettings(HttpClientConfig Blackfrost, HttpClientConfig Ipfs);
 
-    public record HttpClientConfig(string BaseAddress, string ProjectId, int Timeout);
+    public record HttpClientConfig(string BaseAddress, int Timeout);
 }

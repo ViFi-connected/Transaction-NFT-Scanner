@@ -2,19 +2,19 @@ namespace TransactionNftScanner.Models
 {
     public class TransactionUTXOs
     {
-        public required string hash { get; set; }
-        public required List<InputOutput> inputs { get; set; }
-        public required List<InputOutput> outputs { get; set; }
+        public required string Hash { get; set; }
+        public required List<InputOutput> Inputs { get; set; }
+        public required List<InputOutput> Outputs { get; set; }
 
         public class InputOutput
         {
-            public required List<Amount> amount { get; set; }
+            public required List<Amount> Amount { get; set; }
         }
 
         public class Amount
         {
-            public required string unit { get; set; }
-            public required string quantity { get; set; }
+            public required string Unit { get; set; }
+            public required string Quantity { get; set; }
         }
     }
 }
